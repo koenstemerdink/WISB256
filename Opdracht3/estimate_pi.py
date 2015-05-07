@@ -11,8 +11,8 @@ if len(sys.argv)==4:
 
 if len(sys.argv)<3:
     print('Use: estimate_pi.py N L')
-if L>1:
-    print('AssertionError: L should be smaller than 1')
+#if L>1:
+#    print('AssertionError: L should be smaller than 1')
 
 def drop_needle(L):
     x0 = random.random()
@@ -31,7 +31,10 @@ for i in range(1,N):
     if resultaat == True:
         aantalhits += 1
 
-pi = (2*L)/(aantalhits/float(N))
+if L<=1:
+    pi = (2*L)/(aantalhits/float(N))
+else:
+    pi = (2*L)/(aantalhits/float(N)-1)-(2*(math.sqrt(L**2-1)+math.asin(1/L)))/(aantalhits/float(N)-1)
 
 print(str(aantalhits) + ' hits in ' + str(N) + ' tries')
 print('Pi = ' + str(pi))
