@@ -1,51 +1,40 @@
 import math
-
-class Vector(object):
-    """Represents a vector in 3-D space"""
+class Vector():
     
-    def __init__(self, n, waarde=0):
-        self.n = n
-        if waarde==0:
-            self.vector = [0.0]*n
-        elif isinstance(waarde, float) or isinstance(waarde, int):
-            self.vector = [float(waarde)]*n
+    def __init__(self, n, i=0):
+        if type(i)==list:
+            self.vector = i
+            self.n = n
         else:
-            self.vector = []
-            for i in waarde:
-                self.vector.append(float(i))
+            self.vector = [i]*n
+            self.n = n
     
     def __str__(self):
-        output = ""
-        for i in list(range(0,self.n)):
-            output += str(self.vector[i]) + "\n"
-        return output
-    
-    def lincomb(self, other, alpha, beta):
-        output = ""
-        for i in list(range(0,len(self.vector))):
-            element = alpha*self.vector[i]+beta*other.vector[i]
-            output += str(element) + '\n'
-        return output
+        self.output = ""
+        for i in range(0,self.n):
+            self.output += str(self.vector[i]) + "\n"
+        return self.output
     
     def scalar(self, alpha):
-        output = ""
-        for i in list(range(0,len(self.vector))):
-            element = alpha*self.vector[i]
-            output += str(element) + '\n'
-        return output
+        return(Vector(self.n, list(map(lambda x: x *alpha, self.vector))))
     
     def inner(self, other):
-        elementen = []
-        for i in list(range(0,len(self.vector))):
-            element = self.vector[i]*other.vector[i]
-            elementen.append(element)
-        output = sum(elementen)
-        return output
+        return sum(list(map(lambda x,y: x *y, self.vector, other.vector)))
     
     def norm(self):
-        kwadraat = self.inner(self)
-        output = math.sqrt(kwadraat)
-        return output
+        return math.sqrt(self.inner(self))
     
-    def GrammSchmidt(V):
-        
+    def lincomb(self, other, alpha, beta):
+        return Vector(self.n, list(map(lambda x,y: x+y, self.scalar(alpha).vector, other.scalar(beta).vector)))
+
+def GrammSchmidt(V):
+    V[0] = V[0].scalar(1/V[0].norm())
+    basis_vectoren = [V[0]]
+    for i in range(1, len(V)):
+        basis =  V[i]
+        for n in range(0,i):
+            projectie = basis_vectoren[n].scalar(basis.inner(basis_vectoren[n]) / basis_vectoren[n].norm())
+            basis = basis.lincomb(projectie,1,-1)
+            basis = basis.scalar(1/basis.norm())
+        basis_vectoren.append(basis)
+    return(basis_vectoren)
